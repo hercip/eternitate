@@ -54,14 +54,14 @@ def memorial_detail(request, code):
         return render(request, 'memorials/memorial_detail.html', context)
         
     except ProfileCode.DoesNotExist:
-        # If the code doesn't exist, create it and redirect to registration
-        profile_code = ProfileCode.objects.create(code=code)
-        return redirect('memorials:register_memorial', code=code)
+        # If the code doesn't exist, return 404 page not found
+        raise Http404("Memorial page not found. The memorial code you entered does not exist.")
 
 
 @login_required
 def register_memorial(request, code):
     """View for registering a new memorial with a profile code"""
+    # We use get_object_or_404 to return a 404 if the code doesn't exist
     profile_code = get_object_or_404(ProfileCode, code=code)
     
     # If the code is already claimed, redirect to the memorial
@@ -336,11 +336,8 @@ def enter_code(request):
                 return redirect('memorials:register_memorial', code=code)
                 
             except ProfileCode.DoesNotExist:
-                if request.user.is_authenticated:
-                    profile_code = ProfileCode.objects.create(code=code)
-                    return redirect('memorials:register_memorial', code=code)
-                else:
-                    messages.error(request, "Invalid memorial code. Please check and try again.")
+                # Code doesn't exist, show error
+                messages.error(request, "Invalid memorial code. Please check and try again or contact support.")
         else:
             messages.error(request, "Invalid memorial code format. The code should be 32 characters long.")
     
