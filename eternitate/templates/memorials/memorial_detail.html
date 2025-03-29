@@ -1,10 +1,70 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{{ memorial.full_name }} | Memorial | Eternitate{% endblock %}
 
 {% block extra_head %}
 <style>
+    /* Header overlay styling */
+    .memorial-header {
+        position: relative;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    
+    .memorial-header-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+    }
+    
+    .memorial-header-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(22, 30, 46, 0.7);
+        z-index: 2;
+    }
+    
+    .memorial-header-content {
+        position: relative;
+        z-index: 3;
+        text-align: center;
+        padding: 2rem;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-image-container {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 5px solid white;
+        background-color: #e5e7eb;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* Timeline styling */
     .timeline-container {
         position: relative;
     }
@@ -48,6 +108,7 @@
         left: -2.5rem;
     }
     
+    /* Gallery styling */
     .photo-gallery, .video-gallery {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -64,6 +125,7 @@
         transform: scale(1.05);
     }
     
+    /* Tab content styling */
     .tab-content {
         display: none;
     }
@@ -86,15 +148,36 @@
         .timeline-event:nth-child(odd) .timeline-dot, .timeline-event:nth-child(even) .timeline-dot {
             left: -1rem;
         }
+        
+        .profile-image-container {
+            width: 150px;
+            height: 150px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="bg-white rounded-lg shadow-md overflow-hidden fade-in">
-    <!-- Memorial Header -->
-    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-8 md:p-12">
-        <div class="text-center">
+    <!-- Memorial Header with Profile Image and Background -->
+    <div class="memorial-header">
+        {% if memorial.background_image %}
+            <img src="{{ memorial.background_image.url }}" alt="{{ memorial.full_name }}" class="memorial-header-bg">
+        {% else %}
+            <img src="{% static 'img/default-background.svg' %}" alt="Default background" class="memorial-header-bg">
+        {% endif %}
+        
+        <div class="memorial-header-overlay"></div>
+        
+        <div class="memorial-header-content text-white">
+            <div class="profile-image-container">
+                {% if memorial.profile_image %}
+                    <img src="{{ memorial.profile_image.url }}" alt="{{ memorial.full_name }}" class="profile-image">
+                {% else %}
+                    <img src="{% static 'img/default-profile.svg' %}" alt="Default profile" class="profile-image">
+                {% endif %}
+            </div>
+            
             <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ memorial.full_name }}</h1>
             {% if memorial.birth_date and memorial.death_date %}
                 <p class="text-xl opacity-90">

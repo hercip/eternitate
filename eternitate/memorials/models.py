@@ -25,6 +25,12 @@ class Memorial(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     death_date = models.DateField(null=True, blank=True)
     
+    # Profile and background images
+    profile_image = models.ImageField(upload_to='memorials/profile_images/%Y/%m/', null=True, blank=True, 
+                                      help_text="Profile photo of the person being commemorated")
+    background_image = models.ImageField(upload_to='memorials/background_images/%Y/%m/', null=True, blank=True,
+                                         help_text="Background image for the memorial page header")
+    
     # Biography
     biography = models.TextField(blank=True)
     

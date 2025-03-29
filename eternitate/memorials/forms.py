@@ -34,7 +34,7 @@ class MemorialRegistrationForm(forms.ModelForm):
     """Form for registering a new memorial using a profile code"""
     class Meta:
         model = Memorial
-        fields = ['full_name', 'birth_date', 'death_date']
+        fields = ['full_name', 'birth_date', 'death_date', 'profile_image', 'background_image']
         widgets = {
             'full_name': forms.TextInput(attrs={
                 'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
@@ -48,6 +48,12 @@ class MemorialRegistrationForm(forms.ModelForm):
                 'type': 'date',
                 'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
             }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+            }),
+            'background_image': forms.FileInput(attrs={
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+            }),
         }
 
 
@@ -55,7 +61,7 @@ class MemorialEditForm(forms.ModelForm):
     """Form for editing memorial information"""
     class Meta:
         model = Memorial
-        fields = ['full_name', 'birth_date', 'death_date', 'biography', 'allow_tributes']
+        fields = ['full_name', 'birth_date', 'death_date', 'profile_image', 'background_image', 'biography', 'allow_tributes']
         widgets = {
             'full_name': forms.TextInput(attrs={
                 'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
@@ -68,6 +74,12 @@ class MemorialEditForm(forms.ModelForm):
             'death_date': forms.DateInput(attrs={
                 'type': 'date',
                 'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+            }),
+            'profile_image': forms.FileInput(attrs={
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+            }),
+            'background_image': forms.FileInput(attrs={
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
             }),
             'biography': forms.Textarea(attrs={
                 'rows': 10,
