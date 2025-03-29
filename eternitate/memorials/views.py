@@ -351,12 +351,9 @@ def enter_code(request):
 @login_required
 def generate_new_code(request):
     """View for generating a new profile code"""
-    if request.method == 'POST':
-        # Generate a new profile code
-        code = generate_profile_code()
-        profile_code = ProfileCode.objects.create(code=code)
-        
-        messages.success(request, f"New profile code generated: {code}")
-        return redirect('memorials:register_memorial', code=code)
+    # Generate a new profile code
+    code = generate_profile_code()
+    profile_code = ProfileCode.objects.create(code=code)
     
-    return redirect('accounts:profile')
+    messages.success(request, f"New profile code generated: {code}")
+    return redirect('memorials:register_memorial', code=code)
