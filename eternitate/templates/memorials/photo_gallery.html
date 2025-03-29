@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Photo Gallery" %} | {{ memorial.full_name }} | Eternitate{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md fade-in">
+    <h1 class="text-2xl font-bold text-center mb-6">{% trans "Photo Gallery" %}</h1>
+    
+    <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 mb-6" role="alert">
+        <p class="font-bold">{{ memorial.full_name }}</p>
+        <p>{% trans "Managing photo gallery for this memorial." %}</p>
+    </div>
+    
+    <!-- Upload Form -->
+    <div class="mb-10 p-6 bg-gray-50 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4">{% trans "Upload New Photo" %}</h2>
+        
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                    <p class="font-bold">{% trans "Please correct the errors below:" %}</p>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div>
+                <label for="id_image" class="block text-sm font-medium text-gray-700">
+                    {% trans "Photo" %}
+                </label>
+                <input type="file" name="image" id="id_image" accept="image/*" required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label for="id_caption" class="block text-sm font-medium text-gray-700">
+                    {% trans "Caption" %}
+                </label>
+                <input type="text" name="caption" id="id_caption" 
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label for="id_date_taken" class="block text-sm font-medium text-gray-700">
+                    {% trans "Date Taken" %}
+                </label>
+                <input type="date" name="date_taken" id="id_date_taken"
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label for="id_order" class="block text-sm font-medium text-gray-700">
+                    {% trans "Display Order" %}
+                </label>
+                <input type="number" name="order" id="id_order" value="0" min="0"
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <p class="mt-1 text-xs text-gray-500">
+                    {% trans "Lower numbers will be displayed first. Photos with the same number will be ordered by date." %}
+                </p>
+            </div>
+            
+            <div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition">
+                    {% trans "Upload Photo" %}
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Existing Photos -->
+    <h2 class="text-xl font-semibold mb-4">{% trans "Existing Photos" %}</h2>
+    
+    {% if photos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for photo in photos %}
+                <div class="border rounded-lg overflow-hidden shadow-sm">
+                    <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        {% if photo.caption %}
+                            <p class="font-medium">{{ photo.caption }}</p>
+                        {% else %}
+                            <p class="font-medium text-gray-500 italic">{% trans "No caption" %}</p>
+                        {% endif %}
+                        
+                        {% if photo.date_taken %}
+                            <p class="text-sm text-gray-500">{{ photo.date_taken|date:"F j, Y" }}</p>
+                        {% endif %}
+                        
+                        <p class="text-sm text-gray-500">{% trans "Order:" %} {{ photo.order }}</p>
+                        
+                        <div class="mt-3 flex justify-end">
+                            <form method="post" action="{% url 'memorials:delete_photo' photo.id %}" 
+                                  onsubmit="return confirm('{% trans "Are you sure you want to delete this photo?" %}');">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash-alt"></i> {% trans "Delete" %}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-500 text-center italic">{% trans "No photos have been added yet." %}</p>
+    {% endif %}
+    
+    <div class="mt-8 text-center">
+        <a href="{% url 'memorials:memorial_detail' code=memorial.profile_code.code %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-6 rounded-md transition">
+            {% trans "Back to Memorial" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

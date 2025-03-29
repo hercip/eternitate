@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ memorial.full_name }} | Memorial | Eternitate{% endblock %}
+
+{% block extra_head %}
+<style>
+    .timeline-container {
+        position: relative;
+    }
+    
+    .timeline-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: calc(50% - 1px);
+        width: 2px;
+        background-color: #3b82f6;
+    }
+    
+    .timeline-event {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-event:nth-child(odd) {
+        margin-right: calc(50% + 2rem);
+    }
+    
+    .timeline-event:nth-child(even) {
+        margin-left: calc(50% + 2rem);
+    }
+    
+    .timeline-dot {
+        position: absolute;
+        top: 1.5rem;
+        width: 1rem;
+        height: 1rem;
+        background-color: #3b82f6;
+        border-radius: 50%;
+    }
+    
+    .timeline-event:nth-child(odd) .timeline-dot {
+        right: -2.5rem;
+    }
+    
+    .timeline-event:nth-child(even) .timeline-dot {
+        left: -2.5rem;
+    }
+    
+    .photo-gallery, .video-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .gallery-item {
+        overflow: hidden;
+        border-radius: 0.5rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+        transform: scale(1.05);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @media (max-width: 768px) {
+        .timeline-line {
+            left: 1rem;
+        }
+        
+        .timeline-event:nth-child(odd), .timeline-event:nth-child(even) {
+            margin-left: 2rem;
+            margin-right: 0;
+        }
+        
+        .timeline-event:nth-child(odd) .timeline-dot, .timeline-event:nth-child(even) .timeline-dot {
+            left: -1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md overflow-hidden fade-in">
+    <!-- Memorial Header -->
+    <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-8 md:p-12">
+        <div class="text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">{{ memorial.full_name }}</h1>
+            {% if memorial.birth_date and memorial.death_date %}
+                <p class="text-xl opacity-90">
+                    {{ memorial.birth_date|date:"F j, Y" }} - {{ memorial.death_date|date:"F j, Y" }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Owner Controls -->
+    {% if is_owner %}
+        <div class="bg-gray-100 p-4 border-b border-gray-200">
+            <div class="flex flex-wrap justify-center gap-2">
+                <a href="{% url 'memorials:edit_memorial' code=memorial.profile_code.code %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition text-sm">
+                    <i class="fas fa-edit mr-1"></i> {% trans "Edit Profile" %}
+                </a>
+                <a href="{% url 'memorials:upload_photo' code=memorial.profile_code.code %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition text-sm">
+                    <i class="fas fa-image mr-1"></i> {% trans "Manage Photos" %}
+                </a>
+                <a href="{% url 'memorials:upload_video' code=memorial.profile_code.code %}" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition text-sm">
+                    <i class="fas fa-video mr-1"></i> {% trans "Manage Videos" %}
+                </a>
+                <a href="{% url 'memorials:add_timeline_event' code=memorial.profile_code.code %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-md transition text-sm">
+                    <i class="fas fa-history mr-1"></i> {% trans "Manage Timeline" %}
+                </a>
+                <a href="{% url 'memorials:manage_tributes' code=memorial.profile_code.code %}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition text-sm">
+                    <i class="fas fa-comments mr-1"></i> {% trans "Manage Tributes" %}
+                </a>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Navigation Tabs -->
+    <div class="border-b border-gray-200">
+        <nav class="flex overflow-x-auto py-2">
+            <button class="tab-btn px-4 py-2 text-gray-600 hover:text-blue-500 font-medium mx-1 active" data-tab="biography">
+                <i class="fas fa-book mr-1"></i> {% trans "Biography" %}
+            </button>
+            <button class="tab-btn px-4 py-2 text-gray-600 hover:text-blue-500 font-medium mx-1" data-tab="photos">
+                <i class="fas fa-images mr-1"></i> {% trans "Photos" %}
+            </button>
+            <button class="tab-btn px-4 py-2 text-gray-600 hover:text-blue-500 font-medium mx-1" data-tab="videos">
+                <i class="fas fa-video mr-1"></i> {% trans "Videos" %}
+            </button>
+            <button class="tab-btn px-4 py-2 text-gray-600 hover:text-blue-500 font-medium mx-1" data-tab="timeline">
+                <i class="fas fa-history mr-1"></i> {% trans "Timeline" %}
+            </button>
+            <button class="tab-btn px-4 py-2 text-gray-600 hover:text-blue-500 font-medium mx-1" data-tab="tributes">
+                <i class="fas fa-comments mr-1"></i> {% trans "Tributes" %}
+            </button>
+        </nav>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="p-6">
+        <!-- Biography Tab -->
+        <div id="biography" class="tab-content active">
+            <div class="prose max-w-none">
+                {% if memorial.biography %}
+                    {{ memorial.biography|linebreaks }}
+                {% else %}
+                    <p class="text-gray-500 text-center italic">{% trans "No biography has been added yet." %}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Photos Tab -->
+        <div id="photos" class="tab-content">
+            {% if photos %}
+                <div class="photo-gallery">
+                    {% for photo in photos %}
+                        <div class="gallery-item">
+                            <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="w-full h-48 object-cover">
+                            {% if photo.caption %}
+                                <div class="p-2 bg-gray-50">
+                                    <p class="text-sm text-gray-700">{{ photo.caption }}</p>
+                                    {% if photo.date_taken %}
+                                        <p class="text-xs text-gray-500">{{ photo.date_taken|date:"F j, Y" }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center italic">{% trans "No photos have been added yet." %}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Videos Tab -->
+        <div id="videos" class="tab-content">
+            {% if videos %}
+                <div class="video-gallery">
+                    {% for video in videos %}
+                        <div class="gallery-item">
+                            <video controls class="w-full h-48 object-cover">
+                                <source src="{{ video.video.url }}" type="video/mp4">
+                                {% trans "Your browser does not support the video tag." %}
+                            </video>
+                            {% if video.caption %}
+                                <div class="p-2 bg-gray-50">
+                                    <p class="text-sm text-gray-700">{{ video.caption }}</p>
+                                    {% if video.date_recorded %}
+                                        <p class="text-xs text-gray-500">{{ video.date_recorded|date:"F j, Y" }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center italic">{% trans "No videos have been added yet." %}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Timeline Tab -->
+        <div id="timeline" class="tab-content">
+            {% if timeline_events %}
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    {% for event in timeline_events %}
+                        <div class="timeline-event bg-white p-4 rounded-lg shadow-sm">
+                            <div class="timeline-dot"></div>
+                            <h3 class="text-lg font-semibold">{{ event.title }}</h3>
+                            <p class="text-sm text-gray-500 mb-2">{{ event.date|date:"F j, Y" }}</p>
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-full h-48 object-cover rounded-md mb-3">
+                            {% endif %}
+                            <p class="text-gray-700">{{ event.description|linebreaks }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center italic">{% trans "No timeline events have been added yet." %}</p>
+            {% endif %}
+        </div>
+        
+        <!-- Tributes Tab -->
+        <div id="tributes" class="tab-content">
+            {% if memorial.allow_tributes %}
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4">{% trans "Leave a Tribute" %}</h3>
+                    <form method="post" action="{% url 'memorials:memorial_detail' code=memorial.profile_code.code %}">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            <div>
+                                <label for="id_name" class="block text-sm font-medium text-gray-700">
+                                    {% trans "Your Name" %}
+                                </label>
+                                <input type="text" name="name" id="id_name" required 
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="id_email" class="block text-sm font-medium text-gray-700">
+                                    {% trans "Your Email" %} ({% trans "optional" %})
+                                </label>
+                                <input type="email" name="email" id="id_email" 
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="id_message" class="block text-sm font-medium text-gray-700">
+                                    {% trans "Your Message" %}
+                                </label>
+                                <textarea name="message" id="id_message" rows="4" required 
+                                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition">
+                                    {% trans "Submit Tribute" %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <h3 class="text-lg font-semibold mb-4">{% trans "Tributes" %}</h3>
+                
+                {% if tributes %}
+                    <div class="space-y-4">
+                        {% for tribute in tributes %}
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-medium">{{ tribute.name }}</h4>
+                                    <span class="text-sm text-gray-500">{{ tribute.created_at|date:"F j, Y" }}</span>
+                                </div>
+                                <p class="text-gray-700">{{ tribute.message|linebreaks }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center italic">{% trans "No tributes have been left yet. Be the first to leave one!" %}</p>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-500 text-center italic">{% trans "Tributes are currently disabled for this memorial." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active', 'text-blue-500', 'border-b-2', 'border-blue-500'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                const tabId = this.getAttribute('data-tab');
+                this.classList.add('active', 'text-blue-500', 'border-b-2', 'border-blue-500');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

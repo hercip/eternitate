@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "My Profile" %} | Eternitate{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto fade-in">
+    <!-- User Information Section -->
+    <div class="bg-white p-8 rounded-lg shadow-md mb-8">
+        <h1 class="text-2xl font-bold mb-6">{% trans "Your Profile" %}</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-lg font-semibold mb-3">{% trans "Account Information" %}</h2>
+                <div class="space-y-2">
+                    <p>
+                        <span class="font-medium text-gray-700">{% trans "Name:" %}</span> 
+                        {{ user.first_name }} {{ user.last_name }}
+                    </p>
+                    <p>
+                        <span class="font-medium text-gray-700">{% trans "Email:" %}</span> 
+                        {{ user.email }}
+                    </p>
+                    <p>
+                        <span class="font-medium text-gray-700">{% trans "Member Since:" %}</span> 
+                        {{ user.date_joined|date:"F j, Y" }}
+                    </p>
+                </div>
+            </div>
+            
+            <div>
+                <h2 class="text-lg font-semibold mb-3">{% trans "Account Options" %}</h2>
+                <div class="space-y-3">
+                    <div>
+                        <a href="{% url 'account_email' %}" class="text-blue-600 hover:underline">
+                            <i class="fas fa-envelope mr-1"></i> {% trans "Change Email" %}
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'account_change_password' %}" class="text-blue-600 hover:underline">
+                            <i class="fas fa-lock mr-1"></i> {% trans "Change Password" %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Create New Memorial -->
+    <div class="bg-white p-8 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-bold mb-4">{% trans "Create New Memorial" %}</h2>
+        <p class="mb-4">{% trans "Get a unique code to create a new digital memorial for your loved one." %}</p>
+        
+        <form method="post" action="{% url 'memorials:generate_new_code' %}" class="text-center">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition shadow-md">
+                <i class="fas fa-plus-circle mr-2"></i> {% trans "Generate New Code" %}
+            </button>
+        </form>
+    </div>
+    
+    <!-- Your Memorials Section -->
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-6">{% trans "Your Memorials" %}</h2>
+        
+        {% if memorials %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for memorial in memorials %}
+                    <div class="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+                        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-4">
+                            <h3 class="font-bold">{{ memorial.full_name }}</h3>
+                            {% if memorial.birth_date and memorial.death_date %}
+                                <p class="text-sm opacity-90">
+                                    {{ memorial.birth_date|date:"F j, Y" }} - {{ memorial.death_date|date:"F j, Y" }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="p-4">
+                            <p class="mb-3 text-sm">
+                                <span class="font-medium">{% trans "Code:" %}</span> 
+                                <span class="text-gray-600">{{ memorial.profile_code.code }}</span>
+                            </p>
+                            <p class="mb-4 text-sm">
+                                <span class="font-medium">{% trans "Created:" %}</span> 
+                                <span class="text-gray-600">{{ memorial.created_at|date:"F j, Y" }}</span>
+                            </p>
+                            
+                            <div class="flex flex-wrap space-x-2">
+                                <a href="{% url 'memorials:memorial_detail' code=memorial.profile_code.code %}" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition">
+                                    <i class="fas fa-eye mr-1"></i> {% trans "View" %}
+                                </a>
+                                <a href="{% url 'memorials:edit_memorial' code=memorial.profile_code.code %}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm transition">
+                                    <i class="fas fa-edit mr-1"></i> {% trans "Edit" %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <div class="text-5xl text-gray-300 mb-4">
+                    <i class="fas fa-monument"></i>
+                </div>
+                <p class="text-gray-500 mb-6">{% trans "You haven't created any memorials yet." %}</p>
+                <p class="text-gray-600 mb-6">
+                    {% trans "Create your first memorial by generating a unique code and setting up a profile for your loved one." %}
+                </p>
+                <form method="post" action="{% url 'memorials:generate_new_code' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition shadow-md">
+                        <i class="fas fa-plus-circle mr-2"></i> {% trans "Create Your First Memorial" %}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

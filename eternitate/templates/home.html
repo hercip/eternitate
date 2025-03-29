@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Eternitate - Digital Memorials{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Hero Section -->
+    <section class="py-12 md:py-20 px-4 text-center fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-800">
+            Preserve Their Legacy Forever
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">
+            Create a beautiful digital memorial to celebrate and remember the life of your loved ones.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'memorials:generate_new_code' %}" 
+                   class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition shadow-md"
+                   hx-post="{% url 'memorials:generate_new_code' %}" 
+                   hx-swap="none"
+                   hx-trigger="click">
+                    <i class="fas fa-plus-circle mr-2"></i> Create a Memorial
+                </a>
+            {% else %}
+                <a href="{% url 'account_signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition shadow-md">
+                    <i class="fas fa-user-plus mr-2"></i> Sign Up
+                </a>
+                <a href="{% url 'account_login' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium transition shadow-md">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Log In
+                </a>
+            {% endif %}
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="py-16 px-4 bg-white rounded-lg shadow-md slide-in">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6 border border-gray-200 rounded-lg hover:shadow-md transition">
+                <div class="text-center mb-4">
+                    <i class="fas fa-book text-4xl text-blue-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-center">Digital Biography</h3>
+                <p class="text-gray-600">
+                    Create a beautiful biography to tell their life story, with all the important details and memories.
+                </p>
+            </div>
+            
+            <div class="p-6 border border-gray-200 rounded-lg hover:shadow-md transition">
+                <div class="text-center mb-4">
+                    <i class="fas fa-images text-4xl text-blue-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-center">Photo & Video Gallery</h3>
+                <p class="text-gray-600">
+                    Upload and organize photos and videos to create a visual journey through their life and memories.
+                </p>
+            </div>
+            
+            <div class="p-6 border border-gray-200 rounded-lg hover:shadow-md transition">
+                <div class="text-center mb-4">
+                    <i class="fas fa-history text-4xl text-blue-500"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-center">Interactive Timeline</h3>
+                <p class="text-gray-600">
+                    Create a chronological journey through significant moments and milestones in their life.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="py-16 px-4 mt-12 fade-in">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">How It Works</h2>
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/3 flex justify-center p-4">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-2xl font-bold">
+                        1
+                    </div>
+                </div>
+                <div class="md:w-2/3 mt-4 md:mt-0">
+                    <h3 class="text-xl font-semibold mb-2">Get Your Unique Code</h3>
+                    <p class="text-gray-600">
+                        Sign up and receive a unique 32-character code that will be the digital address for your memorial.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center mb-12">
+                <div class="md:w-1/3 flex justify-center p-4">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-2xl font-bold">
+                        2
+                    </div>
+                </div>
+                <div class="md:w-2/3 mt-4 md:mt-0">
+                    <h3 class="text-xl font-semibold mb-2">Create the Memorial</h3>
+                    <p class="text-gray-600">
+                        Fill in biographical information, upload photos and videos, and create a timeline of important life events.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/3 flex justify-center p-4">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-2xl font-bold">
+                        3
+                    </div>
+                </div>
+                <div class="md:w-2/3 mt-4 md:mt-0">
+                    <h3 class="text-xl font-semibold mb-2">Share with Family & Friends</h3>
+                    <p class="text-gray-600">
+                        Share the memorial link with family and friends so they can visit, leave tributes, and remember together.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials -->
+    <section class="py-16 px-4 bg-gray-50 rounded-lg mt-12 slide-in">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">What People Say</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    "Creating a memorial for my father was a healing experience. The platform is beautiful and easy to use. Now our family has a place to remember him."
+                </p>
+                <p class="font-medium text-gray-800">- Maria D.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    "The timeline feature is my favorite. It lets us see the journey of my grandmother's life in a beautiful visual way. Thank you for this service."
+                </p>
+                <p class="font-medium text-gray-800">- John T.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    "I was looking for a way to preserve my brother's memory and found Eternitate. It's exactly what I needed - dignified, beautiful, and easy to use."
+                </p>
+                <p class="font-medium text-gray-800">- Sophie M.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Call to Action -->
+    <section class="py-16 px-4 text-center mt-12 fade-in">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">
+            Create a Lasting Digital Memorial Today
+        </h2>
+        <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+            Honor your loved one with a beautiful digital space that preserves their memory for generations to come.
+        </p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'memorials:generate_new_code' %}" 
+               class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg"
+               hx-post="{% url 'memorials:generate_new_code' %}" 
+               hx-swap="none"
+               hx-trigger="click">
+                <i class="fas fa-plus-circle mr-2"></i> Create a Memorial
+            </a>
+        {% else %}
+            <a href="{% url 'account_signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg">
+                <i class="fas fa-user-plus mr-2"></i> Sign Up Now
+            </a>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
