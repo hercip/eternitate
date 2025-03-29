@@ -9,13 +9,14 @@ This script provides utilities for:
 """
 
 import os
-import sys
+import uuid
+import django
 import random
 import string
-import django
-from django.core.management import call_command
+import argparse
+from datetime import datetime, timedelta
 
-# Set up Django environment
+# Setup Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eternitate.settings')
 django.setup()
 
@@ -28,92 +29,115 @@ def generate_profile_codes(count=10):
     
     for _ in range(count):
         # Generate a random 32-character code
-        code = ''.join(random.choices(
-            string.ascii_uppercase + string.ascii_lowercase + string.digits, 
-            k=32
-        ))
+        code = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
         
         # Check if the code already exists
         if not ProfileCode.objects.filter(code=code).exists():
             ProfileCode.objects.create(code=code)
             codes_created += 1
-            print(f"Created code: {code}")
+            print(f"Created profile code: {code}")
     
-    print(f"Successfully created {codes_created} new profile codes.")
+    print(f"Successfully created {codes_created} profile codes.")
 
 
 def list_memorials():
     """List all memorials in the system"""
-    memorials = Memorial.objects.all().order_by('-created_at')
+    memorials = Memorial.objects.all().select_related('owner', 'profile_code')
     
     if not memorials:
         print("No memorials found in the system.")
         return
     
-    print(f"Found {memorials.count()} memorials:")
+    print("\nList of all memorials:")
+    print("-" * 80)
+    print(f"{'Name':<30} {'Owner':<20} {'Profile Code':<35} {'Created'}")
     print("-" * 80)
     
     for memorial in memorials:
-        print(f"ID: {memorial.id}")
-        print(f"Name: {memorial.full_name}")
-        print(f"Owner: {memorial.owner.email}")
-        print(f"Code: {memorial.profile_code.code}")
-        print(f"Created: {memorial.created_at}")
-        print("-" * 80)
+        print(f"{memorial.full_name:<30} {memorial.owner.email:<20} {memorial.profile_code.code:<35} {memorial.created_at.strftime('%Y-%m-%d')}")
+    
+    print("-" * 80)
+
+
+def list_profile_codes():
+    """List all profile codes in the system"""
+    codes = ProfileCode.objects.all()
+    
+    if not codes:
+        print("No profile codes found in the system.")
+        return
+    
+    print("\nList of all profile codes:")
+    print("-" * 80)
+    print(f"{'Code':<35} {'Status':<15} {'Created'}")
+    print("-" * 80)
+    
+    for code in codes:
+        status = "Claimed" if code.is_claimed else "Unclaimed"
+        print(f"{code.code:<35} {status:<15} {code.created_at.strftime('%Y-%m-%d')}")
+    
+    print("-" * 80)
 
 
 def backup_database():
     """Create a database backup using Django's dumpdata command"""
-    try:
-        filename = f"eternitate_backup_{django.utils.timezone.now().strftime('%Y%m%d_%H%M%S')}.json"
-        call_command('dumpdata', output=filename)
-        print(f"Database backup created: {filename}")
-    except Exception as e:
-        print(f"Error creating database backup: {e}")
+    backup_dir = os.path.join('backups')
+    os.makedirs(backup_dir, exist_ok=True)
+    
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_file = os.path.join(backup_dir, f'eternitate_backup_{timestamp}.json')
+    
+    os.system(f'python manage.py dumpdata --exclude auth.permission --exclude contenttypes --indent 2 > {backup_file}')
+    
+    print(f"Database backup created at {backup_file}")
 
 
 def clear_unused_profile_codes(days=30):
     """Remove unclaimed profile codes older than the specified number of days"""
-    from django.utils import timezone
-    import datetime
+    cutoff_date = datetime.now() - timedelta(days=days)
     
-    cutoff_date = timezone.now() - datetime.timedelta(days=days)
-    codes = ProfileCode.objects.filter(is_claimed=False, created_at__lt=cutoff_date)
+    # Get unclaimed profile codes older than the cutoff date
+    old_codes = ProfileCode.objects.filter(is_claimed=False, created_at__lt=cutoff_date)
     
-    if not codes:
+    count = old_codes.count()
+    if count > 0:
+        old_codes.delete()
+        print(f"Removed {count} unclaimed profile codes older than {days} days.")
+    else:
         print(f"No unclaimed profile codes older than {days} days found.")
-        return
-    
-    count = codes.count()
-    codes.delete()
-    print(f"Deleted {count} unclaimed profile codes older than {days} days.")
 
 
 def print_help():
     """Display help information"""
-    print("Eternitate Asset Management Utility")
+    print("\nEternitate Asset Management Tool")
     print("=" * 40)
     print("Available commands:")
-    print("  generate-codes [count]   - Generate new profile codes (default: 10)")
+    print("  generate <count>         - Generate <count> new profile codes")
     print("  list-memorials           - List all memorials in the system")
+    print("  list-codes               - List all profile codes in the system")
     print("  backup                   - Create a database backup")
-    print("  clear-unused [days]      - Clear unused profile codes (default: 30 days)")
-    print("  help                     - Show this help message")
+    print("  clear-codes <days>       - Remove unclaimed profile codes older than <days> days")
+    print("  help                     - Display this help message")
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1] == "help":
-        print_help()
-    elif sys.argv[1] == "generate-codes":
-        count = int(sys.argv[2]) if len(sys.argv) > 2 else 10
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Eternitate Asset Management Tool')
+    parser.add_argument('command', nargs='?', default='help', help='Command to execute')
+    parser.add_argument('param', nargs='?', help='Optional parameter for the command')
+    
+    args = parser.parse_args()
+    
+    if args.command == 'generate':
+        count = int(args.param) if args.param and args.param.isdigit() else 10
         generate_profile_codes(count)
-    elif sys.argv[1] == "list-memorials":
+    elif args.command == 'list-memorials':
         list_memorials()
-    elif sys.argv[1] == "backup":
+    elif args.command == 'list-codes':
+        list_profile_codes()
+    elif args.command == 'backup':
         backup_database()
-    elif sys.argv[1] == "clear-unused":
-        days = int(sys.argv[2]) if len(sys.argv) > 2 else 30
+    elif args.command == 'clear-codes':
+        days = int(args.param) if args.param and args.param.isdigit() else 30
         clear_unused_profile_codes(days)
     else:
-        print(f"Unknown command: {sys.argv[1]}")
         print_help()
