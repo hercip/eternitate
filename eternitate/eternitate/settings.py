@@ -16,6 +16,9 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Show custom error pages even in debug mode for testing
+DEBUG_SHOW_CUSTOM_ERROR_PAGES = True
+
 # CSRF settings for Replit
 CSRF_TRUSTED_ORIGINS = [
     'https://*.replit.dev',

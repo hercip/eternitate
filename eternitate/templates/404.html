@@ -1,47 +1,36 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Page Not Found" %} | Eternitate{% endblock %}
 
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md text-center fade-in">
-    <div class="text-8xl text-gray-300 mb-6">
-        <i class="fas fa-compass"></i>
-    </div>
-    
-    <h1 class="text-3xl font-bold text-gray-800 mb-4">{% trans "Page Not Found" %}</h1>
-    
-    <p class="text-gray-600 mb-8">
-        {% trans "Sorry, the memorial profile or page you're looking for doesn't exist." %}
-    </p>
-    
-    <div class="space-y-4">
-        <p class="text-gray-600">
-            {% trans "If you were trying to access a memorial, please check the code and try again." %}
+<div class="max-w-lg mx-auto my-12 px-6 py-8 bg-white rounded-lg shadow-md fade-in">
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">{% trans "404" %}</h1>
+        <h2 class="text-2xl text-gray-700 mb-6">{% trans "Page Not Found" %}</h2>
+        
+        <div class="mb-8">
+            <svg class="w-24 h-24 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        
+        <p class="text-gray-600 mb-6">
+            {% trans "We couldn't find the page you were looking for. The memorial page may have been moved, or the memorial code you entered might not exist." %}
         </p>
         
-        <div class="mt-8">
-            <a href="{% url 'home' %}" class="btn btn-primary inline-flex items-center">
-                <i class="fas fa-home mr-2"></i> {% trans "Return to Home" %}
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+            <a href="{% url 'home' %}" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition">
+                {% trans "Return Home" %}
+            </a>
+            <a href="{% url 'memorials:enter_code' %}" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded transition">
+                {% trans "Enter Memorial Code" %}
             </a>
         </div>
         
-        {% if user.is_authenticated %}
-            <div class="mt-4">
-                <form method="post" action="{% url 'memorials:generate_new_code' %}" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-secondary">
-                        <i class="fas fa-plus-circle mr-2"></i> {% trans "Create a New Memorial" %}
-                    </button>
-                </form>
-            </div>
-        {% else %}
-            <div class="mt-4">
-                <a href="{% url 'account_signup' %}" class="btn btn-secondary inline-flex items-center">
-                    <i class="fas fa-user-plus mr-2"></i> {% trans "Sign Up to Create a Memorial" %}
-                </a>
-            </div>
-        {% endif %}
+        <p class="text-sm text-gray-500">
+            {% trans "If you believe this is an error, please contact our support team." %}
+        </p>
     </div>
 </div>
 {% endblock %}
