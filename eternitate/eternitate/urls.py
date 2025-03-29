@@ -18,7 +18,9 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
-    path('favicon.ico', favicon_view),  # Handle favicon.ico requests
+    path('favicon.ico', favicon_view),  # Handle favicon.ico requests without trailing slash
+    path('favicon.ico/', favicon_view),  # Handle favicon.ico requests with trailing slash
+    path('favicon.ico/register/', favicon_view),  # Handle favicon.ico/register/ requests
     path('', include('memorials.urls')),
 ]
 
