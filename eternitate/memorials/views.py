@@ -263,7 +263,7 @@ def manage_tributes(request, code):
         messages.error(request, "You don't have permission to manage tributes for this memorial.")
         return redirect('memorials:memorial_detail', code=code)
     
-    tributes = memorial.tributes.all()
+    tributes = memorial.tributes.all().order_by('-created_at')
     
     # Handle approval/rejection actions
     if request.method == 'POST':
@@ -314,11 +314,11 @@ def toggle_tributes(request, code):
 
 def enter_code(request):
     """View for entering a memorial code"""
-    if request.method == 'POST':
-        form = MemorialCodeForm(request.POST)
-        if form.is_valid():
-            code = form.cleaned_data['code']
-            
+    # Check if code is provided in the URL query parameters
+    code = request.GET.get('code')
+    if code:
+        # Validate the code format
+        if len(code) == 32:
             # Check if the code exists
             try:
                 profile_code = ProfileCode.objects.get(code=code)
@@ -336,12 +336,19 @@ def enter_code(request):
                 return redirect('memorials:register_memorial', code=code)
                 
             except ProfileCode.DoesNotExist:
-                # This shouldn't happen due to form validation, but as a fallback
                 if request.user.is_authenticated:
                     profile_code = ProfileCode.objects.create(code=code)
                     return redirect('memorials:register_memorial', code=code)
                 else:
                     messages.error(request, "Invalid memorial code. Please check and try again.")
+        else:
+            messages.error(request, "Invalid memorial code format. The code should be 32 characters long.")
+    
+    if request.method == 'POST':
+        form = MemorialCodeForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            return redirect(f"{reverse('memorials:enter_code')}?code={code}")
     else:
         form = MemorialCodeForm()
     
