@@ -127,6 +127,10 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_ADAPTER = 'accounts.adapters.MemorialCodeAccountAdapter'
+# We're already using CustomSignupForm through ACCOUNT_FORMS
+# ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
+ACCOUNT_SIGNUP_CLOSED = True
+ACCOUNT_SIGNUP_CLOSED_REDIRECT_URL = '/accounts/signup-closed/'
 
 # Google OAuth settings
 SOCIALACCOUNT_PROVIDERS = {
