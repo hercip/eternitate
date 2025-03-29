@@ -69,7 +69,7 @@ def register_memorial(request, code):
         return redirect('memorials:memorial_detail', code=code)
     
     if request.method == 'POST':
-        form = MemorialRegistrationForm(request.POST)
+        form = MemorialRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             memorial = form.save(commit=False)
             memorial.owner = request.user
@@ -100,7 +100,7 @@ def edit_memorial(request, code):
         return redirect('memorials:memorial_detail', code=code)
     
     if request.method == 'POST':
-        form = MemorialEditForm(request.POST, instance=memorial)
+        form = MemorialEditForm(request.POST, request.FILES, instance=memorial)
         if form.is_valid():
             form.save()
             messages.success(request, "Memorial updated successfully.")

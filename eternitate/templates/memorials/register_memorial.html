@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "Register Memorial" %} | Eternitate{% endblock %}
 
@@ -12,7 +13,7 @@
         <p class="mt-2">{% trans "Please enter the basic information for this memorial." %}</p>
     </div>
     
-    <form method="post" class="space-y-6">
+    <form method="post" class="space-y-6" enctype="multipart/form-data">
         {% csrf_token %}
         
         {% if form.errors %}
@@ -48,6 +49,40 @@
                     {% trans "Death Date" %}
                 </label>
                 {{ form.death_date }}
+            </div>
+        </div>
+
+        <!-- Profile Image -->
+        <div class="border p-4 rounded-lg bg-gray-50">
+            <h3 class="text-lg font-medium mb-2">{% trans "Profile Image" %}</h3>
+            <p class="text-sm text-gray-500 mb-3">{% trans "Upload a profile photo" %}</p>
+            
+            <div class="flex items-center gap-3">
+                <img src="{% static 'img/default-profile.svg' %}" alt="Profile preview" class="w-16 h-16 rounded-full">
+                
+                <div class="flex-1">
+                    <label for="id_profile_image" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Select image" %}
+                    </label>
+                    {{ form.profile_image }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Background Image -->
+        <div class="border p-4 rounded-lg bg-gray-50">
+            <h3 class="text-lg font-medium mb-2">{% trans "Background Image" %}</h3>
+            <p class="text-sm text-gray-500 mb-3">{% trans "Upload a background image for the memorial page" %}</p>
+            
+            <div class="flex items-center gap-3">
+                <img src="{% static 'img/default-background.svg' %}" alt="Background preview" class="w-32 h-16 object-cover rounded">
+                
+                <div class="flex-1">
+                    <label for="id_background_image" class="block text-sm font-medium text-gray-700 mb-1">
+                        {% trans "Select image" %}
+                    </label>
+                    {{ form.background_image }}
+                </div>
             </div>
         </div>
         

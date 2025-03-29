@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "Edit Memorial" %} | {{ memorial.full_name }} | Eternitate{% endblock %}
 
@@ -12,7 +13,7 @@
         <p>{% trans "Memorial Code:" %} {{ memorial.profile_code.code }}</p>
     </div>
     
-    <form class="space-y-6" method="post" action="{% url 'memorials:edit_memorial' code=memorial.profile_code.code %}">
+    <form class="space-y-6" method="post" action="{% url 'memorials:edit_memorial' code=memorial.profile_code.code %}" enctype="multipart/form-data">
         {% csrf_token %}
         
         {% if form.errors %}
@@ -52,6 +53,58 @@
                 </label>
                 <input type="date" name="death_date" id="id_death_date" value="{{ form.death_date.value|date:'Y-m-d'|default:'' }}"
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+        
+        <!-- Profile Image -->
+        <div class="border p-4 rounded-lg bg-gray-50">
+            <h3 class="text-lg font-medium mb-4">{% trans "Profile Image" %}</h3>
+            
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="profile-preview">
+                    {% if memorial.profile_image %}
+                        <img src="{{ memorial.profile_image.url }}" alt="{{ memorial.full_name }}" class="w-32 h-32 rounded-full object-cover">
+                    {% else %}
+                        <img src="{% static 'img/default-profile.svg' %}" alt="Default profile" class="w-32 h-32 rounded-full object-cover">
+                    {% endif %}
+                </div>
+                
+                <div class="flex-1">
+                    <label for="id_profile_image" class="block text-sm font-medium text-gray-700 mb-2">
+                        {% trans "Upload new profile image" %}
+                    </label>
+                    <input type="file" name="profile_image" id="id_profile_image" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <p class="mt-1 text-xs text-gray-500">
+                        {% trans "Recommended size: Square image (1:1 ratio). Maximum size: 5MB." %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Background Image -->
+        <div class="border p-4 rounded-lg bg-gray-50">
+            <h3 class="text-lg font-medium mb-4">{% trans "Background Image" %}</h3>
+            
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="bg-preview">
+                    {% if memorial.background_image %}
+                        <img src="{{ memorial.background_image.url }}" alt="Background" class="w-48 h-24 object-cover rounded">
+                    {% else %}
+                        <img src="{% static 'img/default-background.svg' %}" alt="Default background" class="w-48 h-24 object-cover rounded">
+                    {% endif %}
+                </div>
+                
+                <div class="flex-1">
+                    <label for="id_background_image" class="block text-sm font-medium text-gray-700 mb-2">
+                        {% trans "Upload new background image" %}
+                    </label>
+                    <input type="file" name="background_image" id="id_background_image" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <p class="mt-1 text-xs text-gray-500">
+                        {% trans "Recommended size: Landscape (3:1 ratio). Maximum size: 5MB." %}
+                    </p>
+                </div>
             </div>
         </div>
         
