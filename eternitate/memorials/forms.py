@@ -1,5 +1,33 @@
 from django import forms
-from .models import Memorial, Photo, Video, TimelineEvent, Tribute
+from .models import Memorial, Photo, Video, TimelineEvent, Tribute, ProfileCode
+
+
+class MemorialCodeForm(forms.Form):
+    """Form for entering a memorial code"""
+    code = forms.CharField(
+        max_length=32, 
+        min_length=32, 
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter 32-character memorial code'
+        }),
+        error_messages={
+            'required': 'Please enter a memorial code.',
+            'min_length': 'The memorial code should be 32 characters long.',
+            'max_length': 'The memorial code should be 32 characters long.',
+        }
+    )
+    
+    def clean_code(self):
+        code = self.cleaned_data.get('code')
+        if code:
+            # Check if the code exists
+            try:
+                profile_code = ProfileCode.objects.get(code=code)
+            except ProfileCode.DoesNotExist:
+                raise forms.ValidationError("Invalid memorial code. Please check and try again.")
+        return code
 
 
 class MemorialRegistrationForm(forms.ModelForm):
@@ -8,8 +36,18 @@ class MemorialRegistrationForm(forms.ModelForm):
         model = Memorial
         fields = ['full_name', 'birth_date', 'death_date']
         widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
-            'death_date': forms.DateInput(attrs={'type': 'date'}),
+            'full_name': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
+                'placeholder': 'Enter full name'
+            }),
+            'birth_date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+            }),
+            'death_date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500'
+            }),
         }
 
 

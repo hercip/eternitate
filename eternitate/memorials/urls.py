@@ -4,6 +4,7 @@ from . import views
 app_name = 'memorials'
 
 urlpatterns = [
+    path('enter-code/', views.enter_code, name='enter_code'),
     path('generate-code/', views.generate_new_code, name='generate_new_code'),
     path('<str:code>/', views.memorial_detail, name='memorial_detail'),
     path('<str:code>/register/', views.register_memorial, name='register_memorial'),

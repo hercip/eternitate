@@ -22,9 +22,12 @@
                     <i class="fas fa-plus-circle mr-2"></i> Create a Memorial
                 </a>
             {% else %}
-                <a href="{% url 'account_signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition shadow-md">
-                    <i class="fas fa-user-plus mr-2"></i> Sign Up
-                </a>
+                <form method="post" action="{% url 'memorials:enter_code' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium transition shadow-md">
+                        <i class="fas fa-key mr-2"></i> Enter Memorial Code
+                    </button>
+                </form>
                 <a href="{% url 'account_login' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-medium transition shadow-md">
                     <i class="fas fa-sign-in-alt mr-2"></i> Log In
                 </a>
@@ -179,17 +182,19 @@
             Honor your loved one with a beautiful digital space that preserves their memory for generations to come.
         </p>
         {% if user.is_authenticated %}
-            <a href="{% url 'memorials:generate_new_code' %}" 
-               class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg"
-               hx-post="{% url 'memorials:generate_new_code' %}" 
-               hx-swap="none"
-               hx-trigger="click">
-                <i class="fas fa-plus-circle mr-2"></i> Create a Memorial
-            </a>
+            <form method="post" action="{% url 'memorials:generate_new_code' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg">
+                    <i class="fas fa-plus-circle mr-2"></i> Create a Memorial
+                </button>
+            </form>
         {% else %}
-            <a href="{% url 'account_signup' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg">
-                <i class="fas fa-user-plus mr-2"></i> Sign Up Now
-            </a>
+            <form method="post" action="{% url 'memorials:enter_code' %}" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium transition shadow-lg">
+                    <i class="fas fa-key mr-2"></i> Enter Memorial Code
+                </button>
+            </form>
         {% endif %}
     </section>
 </div>

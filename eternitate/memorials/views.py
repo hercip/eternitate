@@ -6,7 +6,7 @@ from django.urls import reverse
 from .models import ProfileCode, Memorial, Photo, Video, TimelineEvent, Tribute
 from .forms import (
     MemorialRegistrationForm, MemorialEditForm, PhotoForm,
-    VideoForm, TimelineEventForm, TributeForm
+    VideoForm, TimelineEventForm, TributeForm, MemorialCodeForm
 )
 from .utils import generate_profile_code
 
@@ -310,6 +310,42 @@ def toggle_tributes(request, code):
             messages.success(request, "Tributes have been disabled.")
     
     return redirect('memorials:manage_tributes', code=code)
+
+
+def enter_code(request):
+    """View for entering a memorial code"""
+    if request.method == 'POST':
+        form = MemorialCodeForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            
+            # Check if the code exists
+            try:
+                profile_code = ProfileCode.objects.get(code=code)
+                
+                # If the code is claimed, go directly to the memorial
+                if profile_code.is_claimed:
+                    return redirect('memorials:memorial_detail', code=code)
+                
+                # If the code is not claimed and user is not logged in, redirect to login
+                if not request.user.is_authenticated:
+                    messages.info(request, "Please log in to register this memorial.")
+                    return redirect(f"{reverse('account_login')}?next={reverse('memorials:register_memorial', kwargs={'code': code})}")
+                
+                # If user is logged in, go to registration
+                return redirect('memorials:register_memorial', code=code)
+                
+            except ProfileCode.DoesNotExist:
+                # This shouldn't happen due to form validation, but as a fallback
+                if request.user.is_authenticated:
+                    profile_code = ProfileCode.objects.create(code=code)
+                    return redirect('memorials:register_memorial', code=code)
+                else:
+                    messages.error(request, "Invalid memorial code. Please check and try again.")
+    else:
+        form = MemorialCodeForm()
+    
+    return render(request, 'memorials/enter_code.html', {'form': form})
 
 
 @login_required

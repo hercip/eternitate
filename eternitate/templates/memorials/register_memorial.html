@@ -4,15 +4,15 @@
 {% block title %}{% trans "Register Memorial" %} | Eternitate{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md fade-in">
-    <h1 class="text-2xl font-bold text-center mb-6">{% trans "Register New Memorial" %}</h1>
+<div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md fade-in">
+    <h1 class="text-2xl font-bold text-center mb-6">{% trans "Register Memorial" %}</h1>
     
     <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 mb-6" role="alert">
-        <p class="font-bold">{% trans "Unique Code:" %} {{ code }}</p>
-        <p>{% trans "You are creating a memorial using this unique code. This will be the permanent address for this memorial." %}</p>
+        <p class="font-medium">{% trans "Memorial code" %}: <span class="font-mono">{{ code }}</span></p>
+        <p class="mt-2">{% trans "Please enter the basic information for this memorial." %}</p>
     </div>
     
-    <form class="space-y-6" method="post" action="{% url 'memorials:register_memorial' code=code %}">
+    <form method="post" class="space-y-6">
         {% csrf_token %}
         
         {% if form.errors %}
@@ -30,28 +30,24 @@
         {% endif %}
         
         <div>
-            <label for="id_full_name" class="block text-sm font-medium text-gray-700">
-                {% trans "Full Name of Deceased" %}
+            <label for="id_full_name" class="block text-sm font-medium text-gray-700 mb-1">
+                {% trans "Full Name" %} *
             </label>
-            <input type="text" name="full_name" id="id_full_name" required
-                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+            {{ form.full_name }}
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="id_birth_date" class="block text-sm font-medium text-gray-700">
+                <label for="id_birth_date" class="block text-sm font-medium text-gray-700 mb-1">
                     {% trans "Birth Date" %}
                 </label>
-                <input type="date" name="birth_date" id="id_birth_date"
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                {{ form.birth_date }}
             </div>
-            
             <div>
-                <label for="id_death_date" class="block text-sm font-medium text-gray-700">
+                <label for="id_death_date" class="block text-sm font-medium text-gray-700 mb-1">
                     {% trans "Death Date" %}
                 </label>
-                <input type="date" name="death_date" id="id_death_date"
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                {{ form.death_date }}
             </div>
         </div>
         
@@ -61,11 +57,5 @@
             </button>
         </div>
     </form>
-    
-    <div class="mt-8 text-center text-sm text-gray-600">
-        <p>
-            {% trans "After creating the memorial, you'll be able to add a biography, photos, videos, and timeline events." %}
-        </p>
-    </div>
 </div>
 {% endblock %}
