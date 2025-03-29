@@ -33,6 +33,8 @@ urlpatterns = [
 if settings.DEBUG and getattr(settings, 'DEBUG_SHOW_CUSTOM_ERROR_PAGES', False):
     urlpatterns.append(path('test-404/', lambda request: handler404(request, Exception("Test 404 page"))))
 
+# Always serve media files for development
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
