@@ -129,7 +129,7 @@ def upload_photo(request, code):
             photo.memorial = memorial
             photo.save()
             messages.success(request, "Photo uploaded successfully.")
-            return redirect('memorials:photo_gallery', code=code)
+            return redirect('memorials:upload_photo', code=code)
     else:
         form = PhotoForm()
     
