@@ -50,20 +50,17 @@
                         <a href="{% url 'accounts:profile' %}" class="text-gray-600 hover:text-gray-900">
                             <i class="fas fa-user mr-1"></i> My Profile
                         </a>
-                        <a href="{% url 'memorials:generate_new_code' %}" class="text-gray-600 hover:text-gray-900 cursor-pointer">
-                            <i class="fas fa-plus-circle mr-1"></i> New Memorial
-                        </a>
                         <a href="{% url 'account_logout' %}" class="text-gray-600 hover:text-gray-900">
                             <i class="fas fa-sign-out-alt mr-1"></i> Log Out
                         </a>
                     {% else %}
-                        <a href="{% url 'account_login' %}" class="text-gray-600 hover:text-gray-900">
+                        <a href="{% url 'account_login' %}" class="text-gray-600 hover:text-gray-900 mr-2">
                             <i class="fas fa-sign-in-alt mr-1"></i> Log In
                         </a>
-                        <a href="{% url 'memorials:enter_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition inline-block">
-                            Enter Memorial Code
-                        </a>
                     {% endif %}
+                    <a href="{% url 'memorials:enter_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition inline-block">
+                        Enter Memorial Code
+                    </a>
                 </div>
             </div>
         </div>

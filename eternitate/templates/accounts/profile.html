@@ -32,8 +32,8 @@
     <div class="bg-white rounded-lg shadow-md p-8">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold">{% trans "Your Memorials" %}</h2>
-            <a href="{% url 'memorials:generate_new_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition inline-block">
-                <i class="fas fa-plus-circle mr-1"></i> {% trans "Create New Memorial" %}
+            <a href="{% url 'memorials:enter_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition inline-block">
+                <i class="fas fa-key mr-1"></i> {% trans "Enter Memorial Code" %}
             </a>
         </div>
         
@@ -71,9 +71,10 @@
         {% else %}
             <div class="bg-gray-50 p-8 text-center rounded-lg">
                 <p class="text-gray-600 mb-4">{% trans "You don't have any memorials yet." %}</p>
-                <a href="{% url 'memorials:generate_new_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition inline-block">
-                    <i class="fas fa-plus-circle mr-2"></i> {% trans "Create Your First Memorial" %}
+                <a href="{% url 'memorials:enter_code' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition inline-block">
+                    <i class="fas fa-key mr-2"></i> {% trans "Enter a Memorial Code" %}
                 </a>
+                <p class="text-gray-500 mt-4">{% trans "You need a memorial code to create or access a memorial." %}</p>
             </div>
         {% endif %}
     </div>

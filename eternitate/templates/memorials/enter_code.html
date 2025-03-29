@@ -47,14 +47,11 @@
         <p>{% trans "Don't have a code?" %}</p>
         <p class="mt-2">
             {% if user.is_authenticated %}
-                <form method="post" action="{% url 'memorials:generate_new_code' %}" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" class="font-medium text-blue-600 hover:underline border-none bg-transparent p-0 cursor-pointer">
-                        {% trans "Generate a new code" %}
-                    </button>
-                </form>
+                <a href="{% url 'memorials:generate_new_code' %}" class="font-medium text-blue-600 hover:underline">
+                    {% trans "Generate a new code" %}
+                </a>
             {% else %}
-                <a href="{% url 'account_login' %}" class="font-medium text-blue-600 hover:underline">
+                <a href="{% url 'account_login' %}?next={% url 'memorials:generate_new_code' %}" class="font-medium text-blue-600 hover:underline">
                     {% trans "Log in to generate a new code" %}
                 </a>
             {% endif %}
