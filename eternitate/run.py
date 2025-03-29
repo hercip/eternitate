@@ -31,6 +31,10 @@ if os.environ.get('SECRET_KEY') is None:
 # Set DEBUG to True for development
 os.environ.setdefault('DEBUG', 'True')
 
+# Set environment variable to show custom error pages when accessing test-404
+# This will be picked up by settings.py and temporarily disable DEBUG mode
+os.environ.setdefault('SHOW_CUSTOM_ERROR_PAGES', 'True')
+
 # Allow all hosts for development
 os.environ.setdefault('ALLOWED_HOSTS', '*')
 
