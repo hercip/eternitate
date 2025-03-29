@@ -1,0 +1,45 @@
+### Cerințe pentru Dezvoltarea Aplicației "Eternitate"
+
+**Rezumat General:**
+Aplicația "Eternitate" este concepută pentru a oferi utilizatorilor posibilitatea de a crea și gestiona profile digitale pentru persoane decedate. Aceste profile includ biografie, galerii foto și video, precum și o cronologie interactivă a vieții. Aplicația va fi dezvoltată folosind platforma Django și diverse pachete suplimentare pentru autentificare, stocare și design.
+
+**Funcționalități Principale:**
+
+1. **Lista de Coduri de Profil:**
+   - Fiecare cod de profil este unic și are 32 de caractere aleatoare.
+   - Utilizatorii pot accesa profilul digital al unei persoane decedate folosind URL-ul `eternitate.com/COD_30_CARACTERE`.
+
+2. **Acces și Înregistrare:**
+   - Dacă profilul există, se afișează profilul digital.
+   - Dacă profilul nu există dar codul este în baza de date, se afișează pagina de înregistrare.
+   - După înregistrare, codul de profil este asociat cu utilizatorul nou creat.
+
+3. **Profil Digital:**
+   - **Biografie:** Spațiu pentru a scrie despre viața persoanei decedate.
+   - **Galerie Foto:** Secțiune pentru încărcarea și organizarea fotografiilor.
+   - **Galerie Video:** Secțiune pentru încărcarea videoclipurilor.
+   - **Cronologie:** Linie temporală interactivă cu evenimente importante din viața persoanei.
+
+4. **Pagina de Omagii:**
+   - Vizitatorii pot lăsa mesaje și omagii.
+   - Administratorul profilului poate activa sau dezactiva comentariile.
+
+5. **Editare și Actualizare:**
+   - Utilizatorii pot edita și actualiza conținutul profilului oricând.
+
+**Tehnologii și Pachete Utilizate:**
+
+- **Platformă de Dezvoltare:** Django
+- **Autentificare:** Django allauth, integrare cu Google Auth
+- **Securitate:** reCAPTCHA pe signup, login și forgot password
+- **Stocare Fișiere:** Django Storages pentru upload în Blackblaze B2
+- **Design și Interactivitate:** Tailwind CSS pentru design modern și mobile-friendly, htmx pentru îmbunătățirea interactivității
+
+**Design și Experiență Utilizator:**
+
+- Design modern, mobile-friendly și intuitiv.
+- Pagina finală de profil să aibă un design frumos, animat cu tranziții între pagini.
+- Utilizarea tehnicilor actuale și moderne pentru îmbunătățirea paginii.
+
+**Rezultat Final:**
+O aplicație impresionantă și ușor de utilizat care oferă o experiență plăcută și emoționantă pentru cei care doresc să creeze și să gestioneze profile digitale pentru persoane decedate.
